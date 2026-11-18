@@ -70,12 +70,32 @@ def test_repo_git_clone_message_masking(tmpdir, mocker):
         repo.download()
 
 
+def test_repo_gitee_download_uses_token(tmpdir, mocker):
+    repo = Repo(
+        repo_url="https://gitee.com/owner/project",
+        repo_type="gitee",
+        root_path=tmpdir,
+        access_token="test-token",
+    )
+    clone = mocker.patch.object(git.Repo, "clone_from", return_value=None)
+
+    repo.download()
+
+    clone.assert_called_once()
+    assert clone.call_args.kwargs["url"] == (
+        "https://oauth2:test-token@gitee.com/owner/project"
+    )
+    assert repo.name == "owner_project"
+    assert repo.save_path == os.path.join(str(tmpdir), "owner_project")
+
+
 @pytest.mark.network
 @pytest.mark.parametrize(
     "repo_url, repo_type",
     [
         ("https://github.com/AsyncFuncAI/deepwiki-open", "github"),
         ("https://gitlab.com/gitlab-org/gitlab-pages", "gitlab"),
+        ("https://gitee.com/mirrors/gitignore", "gitee"),
     ]
 )
 def test_repo_download(repo_url, repo_type, tmpdir):

@@ -36,6 +36,19 @@ def test_generate_file_url_local_returns_bare_path():
     assert generate_file_url("a/b.py", ctx) == "a/b.py"
 
 
+def test_gitee_source_path_and_line_links():
+    ctx = RepoUrlContext("gitee", "https://gitee.com/org/project", "develop")
+    root = "https://gitee.com/org/project/blob/develop"
+    assert generate_file_url("docs/说明 notes.md", ctx) == (
+        f"{root}/docs/%E8%AF%B4%E6%98%8E%20notes.md"
+    )
+    markdown = post_process_wiki_content(
+        "[main.py:7]() [main.py:7-12]()", ["main.py"], ctx
+    )
+    assert f"({root}/main.py#L7)" in markdown
+    assert f"({root}/main.py#L7-12)" in markdown
+
+
 # --------------------------------------------------------------------------- #
 # post_process_wiki_content
 # --------------------------------------------------------------------------- #

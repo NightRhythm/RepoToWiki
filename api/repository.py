@@ -61,6 +61,31 @@ def _clone_from_gitlab(
 
 
 @_exception_cleanup
+def _clone_from_gitee(
+    remote_url: str,
+    local_path: str,
+    *,
+    access_token: str | None = None,
+    **kwargs,
+) -> GitRepo:
+    if access_token:
+        parsed = urlparse(remote_url)
+        access_token = quote(access_token, safe="")
+
+        remote_url = urlunparse(
+            (
+                parsed.scheme,
+                f"oauth2:{access_token}@{parsed.netloc}",
+                parsed.path,
+                "",
+                "",
+                "",
+            )
+        )
+    return GitRepo.clone_from(url=remote_url, to_path=local_path, **kwargs)
+
+
+@_exception_cleanup
 def _clone_from_github(
     remote_url: str,
     local_path: str,
@@ -174,10 +199,14 @@ class Repo:
     def _extract_repo_name(repo_url: str, repo_type: str | None) -> str:
         if _path_is_url(repo_url):
             url_parts = repo_url.rstrip("/").split("/")
-            if repo_type in ["github", "gitlab", "bitbucket"] and len(url_parts) >= 5:
+            if (
+                repo_type in ["github", "gitlab", "bitbucket", "gitee"]
+                and len(url_parts) >= 5
+            ):
                 # GitHub URL format: https://github.com/owner/repo
                 # GitLab URL format: https://gitlab.com/owner/repo or https://gitlab.com/group/subgroup/repo
                 # Bitbucket URL format: https://bitbucket.org/owner/repo
+                # Gitee URL format: https://gitee.com/owner/repo
                 owner = url_parts[-2]
                 repo = url_parts[-1].replace(".git", "")
                 repo_name = f"{owner}_{repo}"
@@ -210,6 +239,9 @@ class Repo:
 
             elif self.repo_type == "bitbucket":
                 _clone_from_bitbucket(**kwargs)
+
+            elif self.repo_type == "gitee":
+                _clone_from_gitee(**kwargs)
             else:
                 raise NotImplementedError(f"Unknown repo type: {self.repo_type}")
 

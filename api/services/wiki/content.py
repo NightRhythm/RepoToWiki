@@ -16,7 +16,7 @@ from urllib.parse import quote
 class RepoUrlContext:
     """Everything needed to turn a repo-relative path into a web URL."""
 
-    type: str  # 'local' | 'github' | 'gitlab' | 'bitbucket'
+    type: str  # 'local' | 'github' | 'gitlab' | 'bitbucket' | 'gitee'
     repo_url: str | None
     default_branch: str
 
@@ -49,6 +49,8 @@ def generate_file_url(file_path: str, ctx: RepoUrlContext) -> str:
         return f"{ctx.repo_url}/-/blob/{branch}/{path}"
     if ctx.type == "bitbucket":
         return f"{ctx.repo_url}/src/{branch}/{path}"
+    if ctx.type == "gitee":
+        return f"{ctx.repo_url}/blob/{branch}/{path}"
     return file_path
 
 
@@ -67,6 +69,8 @@ def _line_anchor(repo_type: str, start: str | None, end: str | None) -> str:
         return f"#L{start}-{end}" if end else f"#L{start}"
     if repo_type == "bitbucket":
         return f"#lines-{start}:{end}" if end else f"#lines-{start}"
+    if repo_type == "gitee":
+        return f"#L{start}-{end}" if end else f"#L{start}"
     return ""
 
 

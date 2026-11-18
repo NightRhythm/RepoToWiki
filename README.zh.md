@@ -98,15 +98,15 @@ yarn dev
 #### 步骤4：使用DeepWiki！
 
 1. 在浏览器中打开[http://localhost:3000](http://localhost:3000)
-2. 输入GitHub、GitLab或Bitbucket仓库（如`https://github.com/openai/codex`、`https://github.com/microsoft/autogen`、`https://gitlab.com/gitlab-org/gitlab`或`https://bitbucket.org/redradish/atlassian_app_versions`）
-3. 对于私有仓库，点击"+ 添加访问令牌"并输入您的GitHub或GitLab个人访问令牌
+2. 输入GitHub、GitLab、Bitbucket或Gitee仓库（如`https://github.com/openai/codex`、`https://github.com/microsoft/autogen`、`https://gitlab.com/gitlab-org/gitlab`、`https://bitbucket.org/redradish/atlassian_app_versions`或`https://gitee.com/owner/repo`）
+3. 对于私有仓库，点击"+ 添加访问令牌"并输入您的 GitHub、GitLab 或 Gitee 个人访问令牌
 4. 点击"生成Wiki"，见证奇迹的发生！
 
 ## 🔍 工作原理
 
 DeepWiki使用AI来：
 
-1. 克隆并分析GitHub、GitLab或Bitbucket仓库（包括使用令牌认证的私有仓库）
+1. 克隆并分析GitHub、GitLab、Bitbucket或Gitee仓库（包括使用令牌认证的私有仓库）
 2. 创建代码嵌入用于智能检索
 3. 使用上下文感知AI生成文档（使用Google Gemini、OpenAI、OpenRouter或本地Ollama模型）
 4. 创建可视化图表解释代码关系
@@ -116,7 +116,7 @@ DeepWiki使用AI来：
 
 ```mermaid
 graph TD
-    A[用户输入GitHub/GitLab/Bitbucket仓库] --> AA{私有仓库?}
+    A[用户输入GitHub/GitLab/Bitbucket/Gitee仓库] --> AA{私有仓库?}
     AA -->|是| AB[添加访问令牌]
     AA -->|否| B[克隆仓库]
     AB --> B

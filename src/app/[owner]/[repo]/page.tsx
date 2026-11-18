@@ -132,7 +132,9 @@ export default function RepoWikiPage() {
       ? 'gitlab'
       : repoHost?.includes('github')
         ? 'github'
-        : searchParams.get('type') || 'github';
+        : repoHost?.includes('gitee')
+          ? 'gitee'
+          : searchParams.get('type') || 'github';
 
   // Import language context for translations
   const { messages } = useLanguage();
@@ -935,7 +937,7 @@ export default function RepoWikiPage() {
               {embeddingError ? (
                 messages.repoPage?.embeddingErrorDefault || 'This error is related to the document embedding system used for analyzing your repository. Please verify your embedding model configuration, API keys, and try again. If the issue persists, consider switching to a different embedding provider in the model settings.'
               ) : (
-                messages.repoPage?.errorMessageDefault || 'Please check that your repository exists and is public. Valid formats are "owner/repo", "https://github.com/owner/repo", "https://gitlab.com/owner/repo", "https://bitbucket.org/owner/repo", or local folder paths like "C:\\path\\to\\folder" or "/path/to/folder".'
+                messages.repoPage?.errorMessageDefault || 'Please check that your repository exists and is public. Valid formats are "owner/repo", "https://github.com/owner/repo", "https://gitlab.com/owner/repo", "https://bitbucket.org/owner/repo", "https://gitee.com/owner/repo", or local folder paths like "C:\\path\\to\\folder" or "/path/to/folder".'
               )}
             </p>
             <div className="mt-5">
@@ -968,8 +970,10 @@ export default function RepoWikiPage() {
                       <FaGithub className="mr-2" />
                     ) : effectiveRepoInfo.type === 'gitlab' ? (
                       <FaGitlab className="mr-2" />
-                    ) : (
+                    ) : effectiveRepoInfo.type === 'bitbucket' ? (
                       <FaBitbucket className="mr-2" />
+                    ) : (
+                      <FaBookOpen className="mr-2" />
                     )}
                     <a
                       href={effectiveRepoInfo.repoUrl ?? ''}
@@ -1203,7 +1207,7 @@ export default function RepoWikiPage() {
         onApply={confirmRefresh}
         showWikiType={true}
         showTokenInput={effectiveRepoInfo.type !== 'local' && !currentToken} // Show token input if not local and no current token
-        repositoryType={effectiveRepoInfo.type as 'github' | 'gitlab' | 'bitbucket'}
+        repositoryType={effectiveRepoInfo.type as 'github' | 'gitlab' | 'bitbucket' | 'gitee'}
         authRequired={authRequired}
         authCode={authCode}
         setAuthCode={setAuthCode}
